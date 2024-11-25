@@ -22,7 +22,7 @@ void help() {
 system(more.c_str());
 }
 void pause() {
-cout<<"SHELL PAUSADO, PULSE ENTER PARA CONTINUAR"<<endl;
+cout<<"Shell pausado, pulse ENTER para continuar"<<endl;
 cin.ignore();
 }
 
