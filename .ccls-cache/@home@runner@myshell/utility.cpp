@@ -18,9 +18,9 @@ string ssystem(const char *command) {
   return result;
 }
 
-void getCmdArg(string &cmd, string &arg) {
+void getCmdArg(string &cmd, string &arg, string &pwd) {
   // Mostrar directorio antes de cada comando
-  cout << ssystem("pwd") << ": ";
+  cout << pwd << ": ";
   string input;
   getline(cin, input);
   cmd = arg = "";

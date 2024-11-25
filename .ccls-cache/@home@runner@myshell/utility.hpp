@@ -7,4 +7,4 @@ using namespace std;
 
 string ssystem(const char *command);
 
-void getCmdArg(string &cmd,string &arg);
+void getCmdArg(string &cmd,string &arg,string &pwd);

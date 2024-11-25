@@ -7,12 +7,18 @@ const int TAM = 100;
 
 int main() {
   string cmd, arg;
-  string pwd;
+  string pwd=ssystem("pwd");
+  
+  /* while (1) {
+    getCmdArg(cmd, arg, pwd);
+    commands(cmd, arg, pwd);
+  } */
 
-  while (1) {
-    getCmdArg(cmd, arg);
-    commands(cmd, arg);
-  }
+  system("pwd");
+  system("cd prueba");
+  system("pwd");
+  
+  
   return 0;
 }
 

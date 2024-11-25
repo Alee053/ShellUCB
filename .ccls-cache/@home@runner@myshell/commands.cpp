@@ -1,8 +1,8 @@
 #include "commands.hpp"
-
-void cd(string directorio) {
-  string cmd = "cd" + directorio;
-  system(cmd.c_str());
+// TODO Implementar comprobacion folder
+//      ../ / ./
+void cd(string directorio, string &pwd) {
+  pwd += "/" + directorio;
 }
 void clr() { system("clear"); }
 void dir(string directorio) {
@@ -15,17 +15,20 @@ void echo() {
   cin >> comentario;
   cout << comentario << endl;
 }
-void help() {}
+void help(string arg) {
+ string more= "more" + arg;
+system(more.c_str());
+}
 void pause() { system("pause"); }
 
-bool commands(string cmd, string arg) {
-  if (cmd == "cd") {
-  } else if (cmd == "clr")
+bool commands(string cmd, string arg, string &pwd) {
+  if (cmd == "cd")
+    cd(arg, pwd);
+  else if (cmd == "clr")
     clr();
   else if (cmd == "dir")
     dir(arg);
-  else if (cmd == "environ") {
-  } else if (cmd == "echo") {
+  else if (cmd == "echo") {
     echo();
   } else if (cmd == "environ") {
 
