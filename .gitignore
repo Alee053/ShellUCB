@@ -34,3 +34,4 @@
 *.replit
 *.nix
 myshell
+*.ccls-cache
