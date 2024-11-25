@@ -36,3 +36,30 @@ void getCmdArg(string &cmd, string &arg, string &pwd) {
       arg += c;
   }
 }
+
+string fusionarDirs(string pwd, string dir) {
+  string backup = pwd;
+  if (dir[0] == '/')
+    pwd = dir;
+  else if (dir[0] == '.' && dir[1] == '.' && dir[2] == '/') {
+    int pos = pwd.length() - 2;
+    while (pwd[pos] != '/') {
+      pos--;
+    }
+    pos++;
+    pwd = pwd.substr(0, pos);
+  } else if (dir[0] == '.' && dir[1] == '/')
+    pwd += "/" + dir.substr(2, dir.length() - 2);
+  else if (dir[0] == '.' && dir[1] != '/')
+    pwd += "/" + dir.substr(1, dir.length() - 1);
+  else if (dir[0] != '.' && dir[1] != '/')
+    if (pwd[pwd.length() - 1] != '/')
+      pwd += "/" + dir;
+    else
+      pwd += dir;
+  else {
+    return backup;
+  }
+
+  return pwd;
+}

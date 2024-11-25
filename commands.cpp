@@ -1,23 +1,35 @@
 #include "commands.hpp"
+#include "utility.hpp"
+
 // TODO Implementar comprobacion folder
 //      ../ / ./
 void cd(string directorio, string &pwd) {
-  pwd += "/" + directorio;
+  if (!directorio.length()) {
+    cout << pwd << endl;
+    return;
+  }
+  string temp = fusionarDirs(pwd, directorio);
+  if (filesystem::is_directory(filesystem::path(temp)))
+    pwd = temp;
+  else
+    cout << "Directorio invalido" << endl;
 }
 void clr() { system("clear"); }
-void dir(string directorio) {
-  string cmd = "ls " + directorio;
-  system(cmd.c_str());
+void dir(string directorio, string pwd) {
+  string temp = fusionarDirs(pwd, directorio);
+  if (filesystem::is_directory(filesystem::path(temp)))
+    system(("ls " + temp).c_str());
+  else
+    cout << "Directorio invalido";
 }
 void environ() {}
-void echo() {
-  string comentario;
-  cin >> comentario;
-  cout << comentario << endl;
+void echo(string comentario) {
+  if (comentario.length())
+    cout << comentario << endl;
 }
 void help(string arg) {
- string more= "more" + arg;
-system(more.c_str());
+  string more = "more" + arg;
+  system(more.c_str());
 }
 void pause() { system("pause"); }
 
@@ -27,9 +39,9 @@ bool commands(string cmd, string arg, string &pwd) {
   else if (cmd == "clr")
     clr();
   else if (cmd == "dir")
-    dir(arg);
+    dir(arg, pwd);
   else if (cmd == "echo") {
-    echo();
+    echo(arg);
   } else if (cmd == "environ") {
 
   } else if (cmd == "help") {

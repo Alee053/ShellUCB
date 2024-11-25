@@ -1,15 +1,17 @@
 #pragma once
 
 #include <iostream>
-#include <string>;
+#include <string>
+#include <filesystem>
+#include "utility.hpp"
 
 using namespace std;
 
 void cd(string directorio,string &pwd);
 void clr();
-void dir();
+void dir(string directorio, string pwd);
 void environ();
-void echo();
+void echo(string comentario);
 void help();
 void pause();
 
