@@ -15,11 +15,16 @@ void echo() {
   cin >> comentario;
   cout << comentario << endl;
 }
-void help(string arg) {
- string more= "more" + arg;
+void help() {
+  system("stty rows 2");
+  string read="README.txt";
+ string more= "more "+read;
 system(more.c_str());
 }
-void pause() { system("pause"); }
+void pause() {
+cout<<"SHELL PAUSADO, PULSE ENTER PARA CONTINUAR"<<endl;
+cin.ignore();
+}
 
 bool commands(string cmd, string arg, string &pwd) {
   if (cmd == "cd")
@@ -33,9 +38,9 @@ bool commands(string cmd, string arg, string &pwd) {
   } else if (cmd == "environ") {
 
   } else if (cmd == "help") {
-
+   help();
   } else if (cmd == "pause")
-    system("pause");
+    pause();
   else if (cmd == "quit")
     return 0;
   else
