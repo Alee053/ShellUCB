@@ -35,3 +35,4 @@
 *.nix
 myshell
 *.ccls-cache
+myshell.exe

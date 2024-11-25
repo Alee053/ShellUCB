@@ -22,10 +22,24 @@ void dir(string directorio, string pwd) {
   else
     cout << "Directorio invalido";
 }
-/* void environ()
-{
-  cout << "environ";
-} */
+void environ() {
+  ifstream environFile("/proc/self/environ");
+  if (!environFile) {
+    cout << "No se pudo acceder a las variables de entorno." << endl;
+    return;
+  }
+
+  string variable;
+  char ch;
+  while (environFile.get(ch)) {
+    if (ch == '\0') {
+      cout << variable << endl; // Imprime la variable cuando encuentra '\0'
+      variable = "";            // Reinicia la variable
+    } else {
+      variable += ch; // Añade el carácter a la variable actual
+    }
+  }
+}
 void echo(string comentario) {
   if (comentario.length())
     cout << comentario << endl;
@@ -50,8 +64,9 @@ bool commands(string cmd, string arg, string &pwd) {
     dir(arg, pwd);
   else if (cmd == "echo") {
     echo(arg);
-  } else if (cmd == "environ") {
-  } else if (cmd == "help")
+  } else if (cmd == "environ")
+    environ();
+  else if (cmd == "help")
     help();
   else if (cmd == "pause")
     pause();
