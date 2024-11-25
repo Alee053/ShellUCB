@@ -1,6 +1,7 @@
 #include "utility.hpp"
 
-string ssystem(const char *command) {
+string ssystem(const char *command)
+{
   char tmpname[L_tmpnam];
   tmpnam(tmpname);
   string scommand = command;
@@ -8,7 +9,8 @@ string ssystem(const char *command) {
   system(cmd.c_str());
   ifstream file(tmpname, ios::in | ios::binary);
   string result;
-  if (file) {
+  if (file)
+  {
     while (!file.eof())
       result.push_back(file.get());
     file.close();
@@ -18,15 +20,18 @@ string ssystem(const char *command) {
   return result;
 }
 
-void getCmdArg(string &cmd, string &arg, string &pwd) {
+void getCmdArg(string &cmd, string &arg, string &pwd)
+{
   // Mostrar directorio antes de cada comando
   cout << pwd << ": ";
   string input;
   getline(cin, input);
   cmd = arg = "";
   bool space = 0;
-  for (char c : input) {
-    if (c == ' ') {
+  for (char c : input)
+  {
+    if (c == ' ')
+    {
       space = 1;
       continue;
     }
@@ -37,18 +42,22 @@ void getCmdArg(string &cmd, string &arg, string &pwd) {
   }
 }
 
-string fusionarDirs(string pwd, string dir) {
+string fusionarDirs(string pwd, string dir)
+{
   string backup = pwd;
   if (dir[0] == '/')
     pwd = dir;
-  else if (dir[0] == '.' && dir[1] == '.' && dir[2] == '/') {
+  else if (dir[0] == '.' && dir[1] == '.' && dir[2] == '/')
+  {
     int pos = pwd.length() - 2;
-    while (pwd[pos] != '/') {
+    while (pwd[pos] != '/')
+    {
       pos--;
     }
     pos++;
     pwd = pwd.substr(0, pos);
-  } else if (dir[0] == '.' && dir[1] == '/')
+  }
+  else if (dir[0] == '.' && dir[1] == '/')
     pwd += "/" + dir.substr(2, dir.length() - 2);
   else if (dir[0] == '.' && dir[1] != '/')
     pwd += "/" + dir.substr(1, dir.length() - 1);
@@ -57,7 +66,8 @@ string fusionarDirs(string pwd, string dir) {
       pwd += "/" + dir;
     else
       pwd += dir;
-  else {
+  else
+  {
     return backup;
   }
 

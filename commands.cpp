@@ -1,46 +1,72 @@
 #include "commands.hpp"
+#include "utility.hpp"
+
 // TODO Implementar comprobacion folder
 //      ../ / ./
-void cd(string directorio, string &pwd) {
-  pwd += "/" + directorio;
+void cd(string directorio, string &pwd)
+{
+  if (!directorio.length())
+  {
+    cout << pwd << endl;
+    return;
+  }
+  string temp = fusionarDirs(pwd, directorio);
+  if (filesystem::is_directory(filesystem::path(temp)))
+    pwd = temp;
+  else
+    cout << "Directorio invalido" << endl;
 }
 void clr() { system("clear"); }
-void dir(string directorio) {
-  string cmd = "ls " + directorio;
-  system(cmd.c_str());
+void dir(string directorio, string pwd)
+{
+  string temp = fusionarDirs(pwd, directorio);
+  if (filesystem::is_directory(filesystem::path(temp)))
+    system(("ls " + temp).c_str());
+  else
+    cout << "Directorio invalido";
 }
-void environ() {}
-void echo() {
-  string comentario;
-  cin >> comentario;
-  cout << comentario << endl;
+/* void environ()
+{
+  cout << "environ";
+} */
+void echo(string comentario)
+{
+  if (comentario.length())
+    cout << comentario << endl;
 }
-void help() {
+void help()
+{
   system("stty rows 2");
-  string read="README.txt";
- string more= "more "+read;
-system(more.c_str());
+  string read = "README.txt";
+  string more = "more " + read;
+  system(more.c_str());
 }
-void pause() {
-cout<<"Shell pausado, pulse ENTER para continuar"<<endl;
-cin.ignore();
+void pause()
+{
+  cout << "Shell pausado, pulse ENTER para continuar" << endl;
+  cin.ignore();
 }
 
-bool commands(string cmd, string arg, string &pwd) {
+bool commands(string cmd, string arg, string &pwd)
+{
   if (cmd == "cd")
     cd(arg, pwd);
   else if (cmd == "clr")
     clr();
   else if (cmd == "dir")
-    dir(arg);
-  else if (cmd == "echo") {
-    echo();
-  } else if (cmd == "environ") {
-
-  } else if (cmd == "help") {
-   help();
-  } else if (cmd == "pause")
-    pause();
+    dir(arg, pwd);
+  else if (cmd == "echo")
+  {
+    echo(arg);
+  }
+  else if (cmd == "environ")
+  {
+  }
+  else if (cmd == "help")
+  {
+  }
+  else if (cmd == "pause")
+    system("pause");
   else if (cmd == "quit")
     return 0;
   else
