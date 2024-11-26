@@ -1,4 +1,5 @@
 #pragma once
+// Includes necesarios para compilacion del archivo .cpp
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -6,6 +7,8 @@
 #include <string>
 
 using namespace std;
+
+// Declaracion de funciones
 
 string ssystem(const char *cmd);
 

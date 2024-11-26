@@ -1,5 +1,5 @@
 #pragma once
-
+// Includes necesarios para compilacion del archivo .cpp
 #include "utility.hpp"
 #include <filesystem>
 #include <fstream>
@@ -7,6 +7,8 @@
 #include <string>
 
 using namespace std;
+
+// Declaracion de funciones
 
 void cd(string directorio, string &pwd);
 void clr();
