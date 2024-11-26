@@ -2,7 +2,7 @@
 
 string ssystem(const char *command) {
   char tmpname[L_tmpnam];
-  tmpnam(tmpname);
+  mkstemp(tmpname);
   string scommand = command;
   string cmd = scommand + " >> " + tmpname;
   system(cmd.c_str());

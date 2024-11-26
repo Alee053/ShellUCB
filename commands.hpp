@@ -2,6 +2,7 @@
 
 #include "utility.hpp"
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -16,3 +17,11 @@ void help();
 void pause();
 
 bool commands(string cmd, string arg, string &pwd);
+
+void general(string cmd, string arg);
+
+bool commands(string cmd, string arg, string &pwd);
+
+void manageInternal();
+
+void manageBatchfile(string filename);

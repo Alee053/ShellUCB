@@ -55,6 +55,8 @@ void pause() {
   cin.ignore();
 }
 
+void general(string cmd, string arg) { system((cmd + arg).c_str()); }
+
 bool commands(string cmd, string arg, string &pwd) {
   if (cmd == "cd")
     cd(arg, pwd);
@@ -73,6 +75,28 @@ bool commands(string cmd, string arg, string &pwd) {
   else if (cmd == "quit")
     return 0;
   else
-    cout << "Comando inexistente" << endl;
+    general(cmd, arg);
   return 1;
+}
+
+void manageInternal() {
+
+  string cmd, arg;
+  string pwd = ssystem("pwd");
+
+  while (1) {
+    getCmdArg(cmd, arg, pwd);
+    if (!commands(cmd, arg, pwd))
+      break;
+  }
+}
+
+//TODO PWD
+void manageBatchfile(string filename) {
+  ifstream batchfile(file);
+
+  if (!batchfile.is_open()) {
+    cout << "Archivo invalido" << endl;
+    return;
+  }
 }
