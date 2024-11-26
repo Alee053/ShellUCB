@@ -1,7 +1,7 @@
 #include "utility.hpp"
 
 string ssystem(const char *command) {
-  char tmpname[L_tmpnam];
+  char tmpname[100];
   mkstemp(tmpname);
   string scommand = command;
   string cmd = scommand + " >> " + tmpname;
@@ -18,11 +18,13 @@ string ssystem(const char *command) {
   return result;
 }
 
-void getCmdArg(string &cmd, string &arg, string &pwd) {
-  // Mostrar directorio antes de cada comando
-  cout << pwd << ": ";
+void getCmdArg(string &cmd, string &arg, string &pwd, istream &stream) {
+  if (&stream == &cin) {
+    // Mostrar directorio antes de cada comando
+    cout << pwd << ": ";
+  }
   string input;
-  getline(cin, input);
+  getline(stream, input);
   cmd = arg = "";
   bool space = 0;
   for (char c : input) {

@@ -85,18 +85,25 @@ void manageInternal() {
   string pwd = ssystem("pwd");
 
   while (1) {
-    getCmdArg(cmd, arg, pwd);
+    getCmdArg(cmd, arg, pwd, std::cin);
     if (!commands(cmd, arg, pwd))
       break;
   }
 }
 
-//TODO PWD
 void manageBatchfile(string filename) {
-  ifstream batchfile(file);
+  ifstream batchfile(filename);
 
   if (!batchfile.is_open()) {
     cout << "Archivo invalido" << endl;
     return;
+  }
+
+  string line;
+  string pwd = ssystem("pwd"), cmd, arg;
+  cmd = arg = "";
+  while (getline(batchfile, line)) {
+    getCmdArg(cmd, arg, pwd, batchfile);
+    cout << cmd << arg << pwd << endl;
   }
 }
