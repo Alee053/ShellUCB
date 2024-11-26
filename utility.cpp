@@ -73,6 +73,7 @@ string fusionarDirs(string pwd, string dir) {
 }
 
 void getInOutRedir(string redir, string &input, string &output, bool &append) {
+  cout << redir << endl;
   // Verificar si hay que truncar archivo o anadir (append)
   for (int i = 1; i < redir.length(); i++) {
     if (redir[i] == '>' && redir[i - 1] == '>') {
@@ -82,7 +83,7 @@ void getInOutRedir(string redir, string &input, string &output, bool &append) {
   }
   // Extraer nombres de archivos input output
   input = output = "";
-  bool in_out = 0; // in:0 out:1
+  int in_out = 0; // nada:0 out:1 in:2
   bool space = 0;
   for (int i = 1; i < redir.length(); i++) {
     if (redir[i - 1] == '>' && redir[i] == ' ') {
@@ -91,7 +92,7 @@ void getInOutRedir(string redir, string &input, string &output, bool &append) {
       continue;
     }
     if (redir[i - 1] == '<' && redir[i] == ' ') {
-      in_out = 0;
+      in_out = 2;
       space = 0;
       continue;
     }
@@ -99,9 +100,9 @@ void getInOutRedir(string redir, string &input, string &output, bool &append) {
     if (redir[i] == ' ')
       space = 1;
 
-    if (!in_out && !space)
+    if (in_out == 2 && !space)
       input += redir[i];
-    if (in_out && !space)
+    if (in_out == 1 && !space)
       output += redir[i];
   }
 }

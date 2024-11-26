@@ -70,6 +70,21 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
       fileStream.open(output);
     if (fileStream.is_open())
       redirToFile = 1;
+    else
+      cout << "Archivo de escritura invalido" << endl;
+  }
+
+  string fileContent = "";
+
+  if (input.length()) {
+    ifstream tempInput(input);
+    if (tempInput.is_open()) {
+      char c;
+      while (tempInput.get(c))
+        fileContent += c;
+      arg = fileContent;
+    } else
+      cout << "Archivo de lectura invalido" << input << endl;
   }
 
   ostream &outputStream = (redirToFile ? fileStream : cout);
@@ -91,7 +106,7 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
   else if (cmd == "quit")
     return 0;
   else
-    general(cmd, arg);
+    general(cmd, arg + " " + redir);
   return 1;
 }
 
