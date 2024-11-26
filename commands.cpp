@@ -1,8 +1,6 @@
 #include "commands.hpp"
 #include "utility.hpp"
 
-// TODO Implementar comprobacion folder
-//      ../ / ./
 void cd(string directorio, string &pwd) {
   if (!directorio.length()) {
     cout << pwd << endl;
@@ -15,17 +13,17 @@ void cd(string directorio, string &pwd) {
     cout << "Directorio invalido" << endl;
 }
 void clr() { system("clear"); }
-void dir(string directorio, string pwd) {
+void dir(string directorio, string pwd, ostream &oStream) {
   string temp = fusionarDirs(pwd, directorio);
   if (filesystem::is_directory(filesystem::path(temp)))
-    system(("ls " + temp).c_str());
+    oStream << ssystem(("ls " + temp).c_str()) << endl;
   else
-    cout << "Directorio invalido";
+    oStream << "Directorio invalido" << endl;
 }
-void environ() {
+void environ(ostream &oStream) {
   ifstream environFile("/proc/self/environ");
   if (!environFile) {
-    cout << "No se pudo acceder a las variables de entorno." << endl;
+    oStream << "No se pudo acceder a las variables de entorno." << endl;
     return;
   }
 
@@ -33,22 +31,22 @@ void environ() {
   char ch;
   while (environFile.get(ch)) {
     if (ch == '\0') {
-      cout << variable << endl; // Imprime la variable cuando encuentra '\0'
-      variable = "";            // Reinicia la variable
+      oStream << variable << endl; // Imprime la variable cuando encuentra '\0'
+      variable = "";               // Reinicia la variable
     } else {
       variable += ch; // Añade el carácter a la variable actual
     }
   }
 }
-void echo(string comentario) {
+void echo(string comentario, ostream &oStream) {
   if (comentario.length())
-    cout << comentario << endl;
+    oStream << comentario << endl;
 }
-void help() {
+void help(ostream &oStream) {
   system("stty rows 2");
   string read = "README.txt";
   string more = "more " + read;
-  system(more.c_str());
+  oStream << ssystem(more.c_str()) << endl;
 }
 void pause() {
   cout << "Shell pausado, pulse ENTER para continuar" << endl;
@@ -57,19 +55,37 @@ void pause() {
 
 void general(string cmd, string arg) { system((cmd + arg).c_str()); }
 
-bool commands(string cmd, string arg, string &pwd) {
+bool commands(string cmd, string arg, string redir, string &pwd) {
+
+  string input, output;
+  bool append = 0;
+  getInOutRedir(redir, input, output, append);
+
+  ofstream fileStream;
+  bool redirToFile = 0;
+  if (output.length()) {
+    if (append)
+      fileStream.open(output, ios::app);
+    else
+      fileStream.open(output);
+    if (fileStream.is_open())
+      redirToFile = 1;
+  }
+
+  ostream &outputStream = (redirToFile ? fileStream : cout);
+
   if (cmd == "cd")
     cd(arg, pwd);
   else if (cmd == "clr")
     clr();
   else if (cmd == "dir")
-    dir(arg, pwd);
-  else if (cmd == "echo") {
-    echo(arg);
-  } else if (cmd == "environ")
-    environ();
+    dir(arg, pwd, outputStream);
+  else if (cmd == "echo")
+    echo(arg, outputStream);
+  else if (cmd == "environ")
+    environ(outputStream);
   else if (cmd == "help")
-    help();
+    help(outputStream);
   else if (cmd == "pause")
     pause();
   else if (cmd == "quit")
@@ -81,12 +97,12 @@ bool commands(string cmd, string arg, string &pwd) {
 
 void manageInternal() {
 
-  string cmd, arg;
+  string cmd, arg, redir;
   string pwd = ssystem("pwd");
 
   while (1) {
-    getCmdArg(cmd, arg, pwd, std::cin);
-    if (!commands(cmd, arg, pwd))
+    getCmdArg(cmd, arg, redir, pwd, std::cin);
+    if (!commands(cmd, arg, redir, pwd))
       break;
   }
 }
@@ -100,11 +116,11 @@ void manageBatchfile(string filename) {
   }
 
   string line;
-  string pwd = ssystem("pwd"), cmd, arg;
+  string pwd = ssystem("pwd"), cmd, arg, redir;
   cmd = arg = "";
   while (1) {
-    getCmdArg(cmd, arg, pwd, batchfile);
-    if (!commands(cmd, arg, pwd)||batchfile.eof())
+    getCmdArg(cmd, arg, redir, pwd, batchfile);
+    if (!commands(cmd, arg, redir, pwd) || batchfile.eof())
       break;
   }
 }

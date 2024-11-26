@@ -15,25 +15,34 @@ string ssystem(const char *cmd) {
   return result;
 }
 
-void getCmdArg(string &cmd, string &arg, string &pwd, istream &stream) {
+void getCmdArg(string &cmd, string &arg, string &redir, string &pwd,
+               istream &stream) {
   if (&stream == &cin) {
     // Mostrar directorio antes de cada comando
     cout << pwd << ": ";
   }
   string input;
   getline(stream, input);
-  cmd = arg = "";
-  bool space = 0;
+  cmd = arg = redir = "";
+  int field = 0;
   for (char c : input) {
-    if (c == ' ' && !space) {
-      space = 1;
+    if (c == ' ' && field == 0) {
+      field = 1;
       continue;
+    } else if (c == '<' || c == '>') {
+      field = 2;
     }
-    if (!space)
+    if (field == 0)
       cmd += c;
-    else
+    else if (field == 1)
       arg += c;
+    else if (field == 2)
+      redir += c;
   }
+  int cut = 0;
+  while (arg[arg.length() - cut - 1] == ' ')
+    cut++;
+  arg = arg.substr(0, arg.length() - cut);
 }
 
 string fusionarDirs(string pwd, string dir) {
@@ -61,4 +70,38 @@ string fusionarDirs(string pwd, string dir) {
   }
 
   return pwd;
+}
+
+void getInOutRedir(string redir, string &input, string &output, bool &append) {
+  // Verificar si hay que truncar archivo o anadir (append)
+  for (int i = 1; i < redir.length(); i++) {
+    if (redir[i] == '>' && redir[i - 1] == '>') {
+      append = 1;
+      break;
+    }
+  }
+  // Extraer nombres de archivos input output
+  input = output = "";
+  bool in_out = 0; // in:0 out:1
+  bool space = 0;
+  for (int i = 1; i < redir.length(); i++) {
+    if (redir[i - 1] == '>' && redir[i] == ' ') {
+      in_out = 1;
+      space = 0;
+      continue;
+    }
+    if (redir[i - 1] == '<' && redir[i] == ' ') {
+      in_out = 0;
+      space = 0;
+      continue;
+    }
+
+    if (redir[i] == ' ')
+      space = 1;
+
+    if (!in_out && !space)
+      input += redir[i];
+    if (in_out && !space)
+      output += redir[i];
+  }
 }

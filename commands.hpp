@@ -10,13 +10,13 @@ using namespace std;
 
 void cd(string directorio, string &pwd);
 void clr();
-void dir(string directorio, string pwd);
-void environ();
-void echo(string comentario);
-void help();
+void dir(string directorio, string pwd, ostream &oStream);
+void environ(ostream &oStream);
+void echo(string comentario, ostream &oStream);
+void help(ostream &oStream);
 void pause();
 
-bool commands(string cmd, string arg, string &pwd);
+bool commands(string cmd, string arg, string redir, string &pwd);
 
 void general(string cmd, string arg);
 
