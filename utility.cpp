@@ -1,20 +1,17 @@
 #include "utility.hpp"
 
-string ssystem(const char *command) {
-  char tmpname[100];
-  mkstemp(tmpname);
-  string scommand = command;
-  string cmd = scommand + " >> " + tmpname;
-  system(cmd.c_str());
-  ifstream file(tmpname, ios::in | ios::binary);
+string ssystem(const char *cmd) {
+  array<char, 128> buffer;
   string result;
-  if (file) {
-    while (!file.eof())
-      result.push_back(file.get());
-    file.close();
+  unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+  if (!pipe) {
+    throw runtime_error("popen() failed!");
   }
-  remove(tmpname);
-  result = result.substr(0, result.length() - 2);
+  while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) !=
+         nullptr) {
+    result += buffer.data();
+  }
+  result = result.substr(0, result.length() - 1);
   return result;
 }
 

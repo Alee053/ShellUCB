@@ -102,8 +102,9 @@ void manageBatchfile(string filename) {
   string line;
   string pwd = ssystem("pwd"), cmd, arg;
   cmd = arg = "";
-  while (getline(batchfile, line)) {
+  while (1) {
     getCmdArg(cmd, arg, pwd, batchfile);
-    cout << cmd << arg << pwd << endl;
+    if (!commands(cmd, arg, pwd)||batchfile.eof())
+      break;
   }
 }
