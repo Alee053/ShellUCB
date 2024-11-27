@@ -1,3 +1,7 @@
-echo como estas
-echo hola
+echo hola buenas
 dir
+echo ---------------
+dir directorio
+echo ----------------
+environ
+help

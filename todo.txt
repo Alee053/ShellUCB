@@ -1,0 +1,3 @@
+Mejorar fusionar rutas
+Espacio al hacer cat revisar
+Mejorar ssystem (quitar el -1) y anadir a rutas

@@ -76,7 +76,9 @@ void pause() {
 }
 
 // Maneja las llamadas de comandos externos
-void general(string cmd, string arg) { system((cmd + arg).c_str()); }
+void general(string cmd, string arg) {
+  cout << ssystem((cmd + " " + arg).c_str()) << endl;
+}
 
 // Maneja todas las llamadas a comandos, encargandose de redireccion de I/O y
 // comandos externos
@@ -113,7 +115,7 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
         fileContent += c;
       arg = fileContent;
     } else
-      cout << "Archivo de lectura invalido" << input << endl;
+      cout << "Archivo de lectura invalido" << endl;
   }
 
   // Ccrea el stream general, si hay redireccion, se usa el fileStream, sino el

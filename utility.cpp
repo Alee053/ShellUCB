@@ -52,6 +52,7 @@ void getCmdArg(string &cmd, string &arg, string &redir, string &pwd,
 }
 
 // Genera una ruta absluta en base a una ruta absoluta y una relativa
+// TODO MEJORAR
 string fusionarDirs(string pwd, string dir) {
   // Por si la ruta final es invalida
   string backup = pwd;
