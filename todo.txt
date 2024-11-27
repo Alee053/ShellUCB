@@ -1,7 +1,0 @@
-#Mejorar fusionar rutas
-
-REFACTOR Y COMENTARIOS NUEVOS
-
-EXTRAS
-colores?
-flecha last command?

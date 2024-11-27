@@ -1,7 +1,7 @@
 #include "utility.hpp"
 
 // Funcion para ejecutar comando en el shell superior y retornar el output
-string ssystem(const char *cmd) {
+string systemGet(const char *cmd) {
   array<char, 128> buffer;
   string result;
   unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
@@ -50,8 +50,7 @@ void getCmdArg(string &cmd, string &arg, string &redir, string &pwd,
   arg = arg.substr(0, arg.length() - cut);
 }
 
-// Genera una ruta absluta en base a una ruta absoluta y una relativa
-// TODO MEJORAR
+// Genera una ruta absluta en base a una ruta absoluta y una relativa/absoluta
 string fusionarDirs(string pwd, string dir) {
   // Por si la ruta final es invalida
   string backup = pwd;
@@ -59,12 +58,16 @@ string fusionarDirs(string pwd, string dir) {
   if (dir[0] == '/')
     pwd = dir;
   else if (dir[0] == '.' && dir[1] == '.' && dir[2] == '/') {
-    int pos = pwd.length() - 2;
-    while (pwd[pos] != '/') {
-      pos--;
+    while (dir.length()) {
+      int pos = pwd.length() - 2;
+      while (pwd[pos] != '/') {
+        pos--;
+      }
+      pos++;
+      pwd = pwd.substr(0, pos);
+      dir = dir.substr(0, dir.length() - 3);
     }
-    pos++;
-    pwd = pwd.substr(0, pos);
+
   } else if (dir[0] == '.' && dir[1] == '/')
     pwd += "/" + dir.substr(2, dir.length() - 2);
   else if (dir[0] == '.' && dir[1] != '/')
@@ -77,6 +80,13 @@ string fusionarDirs(string pwd, string dir) {
   else {
     return backup;
   }
+  // Borrar si hay / repetidas
+  int pos = 0;
+  while (pwd[pos++] == '/')
+    ;
+  pos -= 2;
+
+  pwd = pwd.substr(max(pos, 0), pwd.length() - pos);
 
   return pwd;
 }
@@ -87,7 +97,7 @@ void getInOutRedir(string redir, string &input, string &output, bool &append) {
   bool hayInput = 0, hayOutput = 0;
   // Verificar si hay que truncar o anadir al archiv
   // Verificar si hay input y output
-  for (int i = 1; i < redir.length(); i++) {
+  for (int i = 1; i < int(redir.length()); i++) {
     if (redir[i] == '>' && redir[i - 1] == '>')
       append = 1;
     if (redir[i] == '>' || redir[i - 1] == '>')
@@ -99,7 +109,7 @@ void getInOutRedir(string redir, string &input, string &output, bool &append) {
   input = output = "";
   int in_out = 0; // nada:0 out:1 in:2
   bool space = 0;
-  for (int i = 1; i < redir.length(); i++) {
+  for (int i = 1; i < int(redir.length()); i++) {
     if (redir[i - 1] == '>' && redir[i] == ' ') {
       in_out = 1;
       space = 0;
@@ -119,10 +129,12 @@ void getInOutRedir(string redir, string &input, string &output, bool &append) {
     if (in_out == 1 && !space)
       output += redir[i];
   }
+  // Si se mando input o output pero en mal formato
   if (hayInput && !input.length())
     input = "bad parse";
   if (hayOutput && !output.length())
     output = "bad parse";
 }
 
+// Corta n caracteres del final de un string
 string cutEnd(string str, int n) { return str.substr(0, str.length() - n); }

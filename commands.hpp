@@ -20,9 +20,7 @@ void pause();
 
 bool commands(string cmd, string arg, string redir, string &pwd);
 
-void general(string cmd, string arg);
-
-bool commands(string cmd, string arg, string &pwd);
+void external(string cmd, string arg);
 
 void manageInternal();
 

@@ -1,5 +1,4 @@
 #include "commands.hpp"
-#include "utility.hpp"
 
 // Comando cd, usa directorio como argumento y pwd para simular movimiento entre
 // directorios desde el shell
@@ -27,7 +26,7 @@ void dir(string directorio, string pwd, ostream &oStream) {
   // Solo tomar primera palabra
   int pos = 0;
   while (directorio[pos] != '\n' && directorio[pos] != ' ' &&
-         directorio[pos] != '\0' && pos < directorio.length())
+         directorio[pos] != '\0' && pos < int(directorio.length()))
     pos++;
   directorio = directorio.substr(0, pos);
 
@@ -37,7 +36,7 @@ void dir(string directorio, string pwd, ostream &oStream) {
   // Si es que es directorio valido, se hace llamado a ls con el directorio
   // final, y se lo imprime a la salida indicada (archivo o cout)
   if (filesystem::is_directory(filesystem::path(temp)))
-    oStream << ssystem(("ls " + temp).c_str());
+    oStream << systemGet(("ls " + temp).c_str());
   else
     oStream << "Directorio invalido" << endl;
 }
@@ -72,13 +71,14 @@ void echo(string comentario, ostream &oStream) {
 // Comando help, imprime el README.txt usando el comando more, permite
 // redireccion de I/O
 void help(ostream &oStream) {
+  // Mostrar de dos filas en dos filas
   system("stty rows 2");
   string cmd = "more README.txt";
 
   if (&oStream == &cout)
     system(cmd.c_str());
   else
-    oStream << ssystem(cmd.c_str()) << endl;
+    oStream << systemGet(cmd.c_str()) << endl;
 }
 // Comando pause, pausa ejecucion hasta presionar una tecla
 void pause() {
@@ -89,8 +89,8 @@ void pause() {
 }
 
 // Maneja las llamadas de comandos externos
-void general(string cmd, string arg) {
-  cout << ssystem((cmd + " " + arg).c_str()) << endl;
+void external(string cmd, string arg) {
+  cout << systemGet((cmd + " " + arg).c_str()) << endl;
 }
 
 // Maneja todas las llamadas a comandos, encargandose de redireccion de I/O y
@@ -102,6 +102,7 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
   bool append = 0;
   getInOutRedir(redir, input, output, append);
 
+  // Si es que se mando output o input pero en formato incorrecto, muestra error
   if (input == "bad parse" || output == "bad parse") {
     cout << "Formato de redireccion incorrecto" << endl;
     return 1;
@@ -163,10 +164,10 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
   else if (cmd == "quit")
     return 0;
   else
-    general(cmd,
-            arg + " " +
-                redir); // Si es comando externo, se envia el comando tal cual,
-                        // uniendo argumentos y opciones de redireccion
+    external(cmd,
+             arg + " " +
+                 redir); // Si es comando externo, se envia el comando tal cual,
+                         // uniendo argumentos y opciones de redireccion
   return 1;
 }
 
@@ -176,7 +177,7 @@ void manageInternal() {
   // Creacion varaibles, comando, argumentos, y opciones de redireccion
   string cmd, arg, redir;
   string pwd =
-      cutEnd(ssystem("pwd"), 1); // Se inicializa el pwd en la carpeta actual
+      cutEnd(systemGet("pwd"), 1); // Se inicializa el pwd en la carpeta actual
 
   // Mientras no se ejecute quit, se separa el input en cmd, arg y redir
   while (1) {
@@ -189,21 +190,21 @@ void manageInternal() {
 // Maneja llamadas al shell externas con argumento (batchfile)
 // y lo ejecuta como script
 void manageBatchfile(string filename) {
-  ifstream batchfile(filename);
+  ifstream fileStream(filename);
 
   // Se abre archivo para ejecutar como script
-  if (!batchfile.is_open()) {
+  if (!fileStream.is_open()) {
     cout << "Archivo invalido" << endl;
     return;
   }
 
   // Leer linea por linea y ejecutar
   string line;
-  string pwd = cutEnd(ssystem("pwd"), 1), cmd, arg, redir;
+  string pwd = cutEnd(systemGet("pwd"), 1), cmd, arg, redir;
   cmd = arg = "";
   while (1) {
-    getCmdArg(cmd, arg, redir, pwd, batchfile);
-    if (!commands(cmd, arg, redir, pwd) || batchfile.eof())
+    getCmdArg(cmd, arg, redir, pwd, fileStream);
+    if (!commands(cmd, arg, redir, pwd) || fileStream.eof())
       break;
   }
 }
