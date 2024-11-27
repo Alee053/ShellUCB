@@ -18,3 +18,5 @@ void getCmdArg(string &cmd, string &arg, string &redir, string &pwd,
 string fusionarDirs(string pwd, string dir);
 
 void getInOutRedir(string redir, string &input, string &output, bool &append);
+
+string cutEnd(string str, int n);

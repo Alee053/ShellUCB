@@ -24,13 +24,20 @@ void clr() { system("clear"); }
 // absoluta oStream es un output stream, para redireccionar salidas, si no hay
 // redireccion usa cout
 void dir(string directorio, string pwd, ostream &oStream) {
+  // Solo tomar primera palabra
+  int pos = 0;
+  while (directorio[pos] != '\n' && directorio[pos] != ' ' &&
+         directorio[pos] != '\0' && pos < directorio.length())
+    pos++;
+  directorio = directorio.substr(0, pos);
+
   // Se une el directorio pwd con directorio, respetando comandos relativos (./
   // ../ .)
   string temp = fusionarDirs(pwd, directorio);
   // Si es que es directorio valido, se hace llamado a ls con el directorio
   // final, y se lo imprime a la salida indicada (archivo o cout)
   if (filesystem::is_directory(filesystem::path(temp)))
-    oStream << ssystem(("ls " + temp).c_str()) << endl;
+    oStream << ssystem(("ls " + temp).c_str());
   else
     oStream << "Directorio invalido" << endl;
 }
@@ -44,7 +51,7 @@ void environ(ostream &oStream) {
     return;
   }
 
-  // Genera el mensake a imprimir, leyendo el archivo caracter por caracter
+  // Genera el mensaje a imprimir, leyendo el archivo caracter por caracter
   string variable;
   char ch;
   while (environFile.get(ch)) {
@@ -67,12 +74,18 @@ void echo(string comentario, ostream &oStream) {
 void help(ostream &oStream) {
   system("stty rows 2");
   string cmd = "more README.txt";
-  oStream << ssystem(cmd.c_str()) << endl;
+
+  if (&oStream == &cout)
+    system(cmd.c_str());
+  else
+    oStream << ssystem(cmd.c_str()) << endl;
 }
 // Comando pause, pausa ejecucion hasta presionar una tecla
 void pause() {
-  cout << "Shell pausado, pulse ENTER para continuar" << endl;
-  cin.ignore();
+  cout << "Shell pausado, pulse ENTER para continuar";
+  while (1)
+    if (cin.get() == '\n')
+      break;
 }
 
 // Maneja las llamadas de comandos externos
@@ -89,6 +102,11 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
   bool append = 0;
   getInOutRedir(redir, input, output, append);
 
+  if (input == "bad parse" || output == "bad parse") {
+    cout << "Formato de redireccion incorrecto" << endl;
+    return 1;
+  }
+
   // Crea el stream de salida para archivos
   ofstream fileStream;
   bool redirToFile = 0;
@@ -99,8 +117,10 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
       fileStream.open(output);
     if (fileStream.is_open())
       redirToFile = 1;
-    else
+    else {
       cout << "Archivo de escritura invalido" << endl;
+      return 1;
+    }
   }
 
   // Crea un string para almacenar todo lo contenido en el archivo de lectura
@@ -114,8 +134,10 @@ bool commands(string cmd, string arg, string redir, string &pwd) {
       while (tempInput.get(c))
         fileContent += c;
       arg = fileContent;
-    } else
+    } else {
       cout << "Archivo de lectura invalido" << endl;
+      return 1;
+    }
   }
 
   // Ccrea el stream general, si hay redireccion, se usa el fileStream, sino el
@@ -153,7 +175,8 @@ void manageInternal() {
 
   // Creacion varaibles, comando, argumentos, y opciones de redireccion
   string cmd, arg, redir;
-  string pwd = ssystem("pwd"); // Se inicializa el pwd en la carpeta actual
+  string pwd =
+      cutEnd(ssystem("pwd"), 1); // Se inicializa el pwd en la carpeta actual
 
   // Mientras no se ejecute quit, se separa el input en cmd, arg y redir
   while (1) {
@@ -176,7 +199,7 @@ void manageBatchfile(string filename) {
 
   // Leer linea por linea y ejecutar
   string line;
-  string pwd = ssystem("pwd"), cmd, arg, redir;
+  string pwd = cutEnd(ssystem("pwd"), 1), cmd, arg, redir;
   cmd = arg = "";
   while (1) {
     getCmdArg(cmd, arg, redir, pwd, batchfile);

@@ -1,3 +1,7 @@
-Mejorar fusionar rutas
-Espacio al hacer cat revisar
-Mejorar ssystem (quitar el -1) y anadir a rutas
+#Mejorar fusionar rutas
+
+REFACTOR Y COMENTARIOS NUEVOS
+
+EXTRAS
+colores?
+flecha last command?

@@ -12,7 +12,6 @@ string ssystem(const char *cmd) {
          nullptr) {
     result += buffer.data();
   }
-  result = result.substr(0, result.length() - 1);
   return result;
 }
 
@@ -22,7 +21,7 @@ void getCmdArg(string &cmd, string &arg, string &redir, string &pwd,
                istream &stream) {
   // Mostrar directorio antes de cada comando, solo si el stream de input es cin
   if (&stream == &cin) {
-    cout << pwd << ": ";
+    cout << pwd << "& ";
   }
   // Leer linea
   string input;
@@ -85,12 +84,16 @@ string fusionarDirs(string pwd, string dir) {
 // Extrae nombre de archivo de redireccion de input, output y si se quiere hacer
 // append en vez de truncar
 void getInOutRedir(string redir, string &input, string &output, bool &append) {
-  // Verificar si hay que truncar archivo o anadir (append)
+  bool hayInput = 0, hayOutput = 0;
+  // Verificar si hay que truncar o anadir al archiv
+  // Verificar si hay input y output
   for (int i = 1; i < redir.length(); i++) {
-    if (redir[i] == '>' && redir[i - 1] == '>') {
+    if (redir[i] == '>' && redir[i - 1] == '>')
       append = 1;
-      break;
-    }
+    if (redir[i] == '>' || redir[i - 1] == '>')
+      hayOutput = 1;
+    if (redir[i] == '<' || redir[i - 1] == '<')
+      hayInput = 1;
   }
   // Extraer nombres de archivos input output
   input = output = "";
@@ -116,4 +119,10 @@ void getInOutRedir(string redir, string &input, string &output, bool &append) {
     if (in_out == 1 && !space)
       output += redir[i];
   }
+  if (hayInput && !input.length())
+    input = "bad parse";
+  if (hayOutput && !output.length())
+    output = "bad parse";
 }
+
+string cutEnd(string str, int n) { return str.substr(0, str.length() - n); }
