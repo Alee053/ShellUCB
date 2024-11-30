@@ -71,9 +71,9 @@ void echo(string comentario, ostream &oStream) {
 // Comando help, imprime el README.txt usando el comando more, permite
 // redireccion de I/O
 void help(ostream &oStream) {
-  // Mostrar de dos filas en dos filas
+  // Mostrar de dos filas en dos filas y despues linea por linea
   system("stty rows 2");
-  string cmd = "more README.txt";
+  string cmd = "more readme.txt";
 
   if (&oStream == &cout)
     system(cmd.c_str());

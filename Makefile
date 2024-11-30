@@ -1,3 +1,6 @@
+# Alejandro Castro, Santiago Mendoza, Sebastian Arce, Daniel Gamarra - Proyecto Sistemas Operativos 1
+# Arquitectura Computacional y Sistemas Operativos tutor: Estefany Castellon
+
 all: main
 
 CXX = g++
